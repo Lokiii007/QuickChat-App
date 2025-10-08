@@ -14,7 +14,7 @@ export const signup = async (req, res) => {
             return res.json({success: false, message: "Missing Details"})
         }
         // check if user already exists
-        const user = await User.findOne({email})
+        const user = await User.findOne({email});
 
         if(user){
             return res.json({success: false, message: "Account already exists"})
@@ -29,7 +29,7 @@ export const signup = async (req, res) => {
 
         const token = generateToken(newUser._id);
         
-        res.json({success: true, userData: newUser, token, 
+        res.json({success: true, user: newUser, token, 
         message: "Account Created Successfully" });
 
     }catch(error){
@@ -45,6 +45,10 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const userData = await User.findOne({ email });
+
+        if (!userData) {
+            return res.json({ success: false, message: "Invalid Credentials" });
+        }
 
         const isPasswordCorrect = await bcrypt.compare(password, userData.password);
         
@@ -69,28 +73,55 @@ export const checkAuth = (req, res) => {
 }
 
 // Controller to update user profile
+// export const updateProfile = async (req, res) => {
+//     try {
+//         const { fullName, bio, profilePic } = req.body;
+//         const userId = req.user._id;
+
+//         let updateUser;
+
+//         if(!profilePic){
+//             updateUser = await User.findByIdAndUpdate(userId, {fullName, bio}, 
+//             {new: true});
+//         }else{
+//             const uploadedImage = await cloudinary.uploader.upload(profilePic);
+
+//             updateUser = await User.findByIdAndUpdate(userId, {profilePic: uploadedImage.secure_url, 
+//             fullName, bio},{new: true})
+//         }
+//         res.json({success: true, user: updateUser});
+//     } catch (error) {
+//         console.log(error.message);
+        
+//         res.json({success: false, message: error.message});
+        
+//     }
+// }
+
+
+
 export const updateProfile = async (req, res) => {
     try {
         const { fullName, bio, profilePic } = req.body;
         const userId = req.user._id;
 
-        let updateUser;
+        // build update object
+        let updateData = { fullName, bio };
 
-        if(!profilePic){
-            updateUser = await User.findByIdAndUpdate(userId, {fullName, bio}, 
-            {new: true});
-        }else{
+        // if profilePic exists, upload to cloudinary
+        if (profilePic) {
             const uploadedImage = await cloudinary.uploader.upload(profilePic);
-
-            updateUser = await User.findByIdAndUpdate(userId, {profilePic: uploadedImage.secure_url, 
-            fullName, bio},{new: true})
+            updateData.profilePic = uploadedImage.secure_url;
         }
-        res.json({success: true, user: updateUser});
-    } catch (error) {
-        console.log(error.message);
-        
-        res.json({success: false, message: error.message});
-        
-    }
-}
 
+        // update user
+        const updateUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+        // return updated user
+        res.json({ success: true, user: updateUser });
+
+    } catch (error) {
+        console.error(error.message);
+        res.json({ success: false, message: error.message });
+    }
+};

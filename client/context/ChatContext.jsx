@@ -18,8 +18,10 @@ export const ChatProvider = ({ children }) => {
     const getUsers = async () => {
         try {
             const { data } = await axios.get("/api/messages/users");
+            console.log(data.filteredUsers
+);
             if(data.success){
-                setUsers(data.users)
+                setUsers(data.filteredUsers)
                 setUnseenMessages(data.unseenMessages)
             }
         } catch (error) {
@@ -32,6 +34,7 @@ export const ChatProvider = ({ children }) => {
         try {
             const { data } = await axios.get(`/api/messages/${userId}`);
             if(data.success){
+                console.log(data)
                 setMessages(data.messages)
             }
         } catch (error) {
@@ -42,7 +45,7 @@ export const ChatProvider = ({ children }) => {
     // function to send messages for selected user
     const sendMessage = async (messageData) => {
         try {
-            const { data } = await axios.post(`/api/messages/send/${selectedUser._id} ` , messageData);
+            const { data } = await axios.post(`/api/messages/send/${selectedUser._id}` , messageData);
             if(data.success){
                 setMessages((prevMessages) => [...prevMessages, data.newMessage])
             }else{
@@ -76,6 +79,10 @@ export const ChatProvider = ({ children }) => {
     const unsubscribeFromMessages = () => {
         if(socket) socket.off("newMessage");
     }
+    
+    useEffect(() => {
+        getUsers();            // load sidebar users
+    }, [axios]);
 
     useEffect(()=> {
         subscribeToMessages();

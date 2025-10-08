@@ -61,11 +61,11 @@ const Sidebar = ({}) => {
                         className='w-10 h-10 rounded-full  '/>
                         <div className='flex flex-col leading-5'>
                             <p>{user.fullName}</p>
-                            {
-                                onlineUsers.includes(user._id)
+                            {/* {
+                                onlineUsers && onlineUsers.includes(user._id)
                                 ? <span className='text-green-400 text-xs'>Onilne</span>
                                 : <span className=' text-neutral-400 text-xs'>Offline</span>
-                            }
+                            } */}
                         </div>
                         {unseenMessages[user._id] > 0 && (
                             <p className='absolute top-3 right-3 text-xs h-5 w-5 
