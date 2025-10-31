@@ -17,7 +17,7 @@ const HomePage = () => {
 
                 <Sidebar />
                 <ChatContainer />
-                <RightSidebar />
+                <RightSidebar  />
 
             </div>
         </div>

@@ -29,7 +29,7 @@ const Sidebar = ({}) => {
         text-white ${selectedUser ? "max-md:hidden" : ''}`}>
             <div className='pb-5'>
                 <div className='flex items-center justify-between'>
-                    <img src={ assets.logo } alt="Logo" className='max-w-40' />
+                    <img src={assets.logo} alt="Logo" className='max-w-40' />
                     <div className='relative py-2 group'>
                         <img src={assets.menu_icon} alt="Menu" className='max-h-5 cursor-pointer' />
                         <div className='absolute top-full right-0 z-20 w-32 p-5 rounded-md
@@ -51,7 +51,7 @@ const Sidebar = ({}) => {
 
             </div>
             
-            <div>
+            <div className='flex flex-col'>
                 {filteredUsers.map((user,index)=> (
                     <div key={index} onClick={() => {setSelectedUser(user), setUnseenMessages(prev => ({...prev, [user._id] : 0})) }}
                     className={`relative flex items-center gap-2 p-2 pl-4 rounded 
